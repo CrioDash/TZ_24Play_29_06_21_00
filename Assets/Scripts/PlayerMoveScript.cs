@@ -9,12 +9,14 @@ using UnityEngine.SceneManagement;
 public class PlayerMoveScript : MonoBehaviour
 {
     public float speed;
+    public float jumpHeight;
     
     public Transform CubeParent;
 
+    public GameObject EndScreen;
     public GameObject CubeCreateParticle;
     public GameObject CubePrefab;
-    public GameObject StickmanBody;
+    public Rigidbody StickmanBody;
     
     public Animator playerAnimator;
     public Animator cameraAnimator;
@@ -23,67 +25,75 @@ public class PlayerMoveScript : MonoBehaviour
     
     public static PlayerMoveScript Instance;
 
-    
+    private TrailRenderer _trail;
     private List<Rigidbody> _rigidbodies;
 
     private void Awake()
     {
         Instance = this;
         playerAnimator = GetComponentInChildren<Animator>();
-        
+        _trail = GetComponentInChildren<TrailRenderer>();
         _rigidbodies = StickmanBody.GetComponentsInChildren<Rigidbody>().ToList();
+        _rigidbodies.Remove(StickmanBody);    
     }
 
     void Start()
     {
+        _rigidbodies.ForEach(rb => rb.isKinematic = true);
         Cubes = GetComponentsInChildren<PlayerCubeScript>().ToList();
-        GameManager.Instance.ChangeState();
+        
     }
     
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
-            SceneManager.LoadScene(0);
-       if(GameManager.Instance.IsPaused)
+        if(GameManager.Instance.IsPaused)
            return;
        Vector3 pos = transform.position;
        pos.z += speed * Time.deltaTime;
        transform.position = pos;
+       if (_trail != null)
+       {
+           pos = _trail.transform.localPosition;
+           pos.y = -0.45f;
+           _trail.transform.localPosition = pos;
+       }
     }
 
     public IEnumerator Death()
     {
         _rigidbodies.ForEach(rb => rb.isKinematic = false);
+        Destroy(_trail.gameObject);
         playerAnimator.enabled = false;
-        yield return new WaitForSeconds(0.1f);
+        EndScreen.SetActive(true);
+        yield return new WaitForSeconds(0.5f);
         GameManager.Instance.ChangeState();
     }
 
     public void Jump()
     {
-        Debug.Log("Jump");
-        Vector3 pos = StickmanBody.transform.localPosition;
-        pos.y += 1f;
-        StickmanBody.transform.localPosition = pos;
         playerAnimator.SetTrigger("Jump");
+        Vector3 pos = StickmanBody.transform.localPosition;
+        pos.y += jumpHeight;
+        StickmanBody.transform.localPosition = pos;
     }
 
     public IEnumerator CreateCube()
     {
         yield return new WaitForSeconds(0.05f);
         GameObject gm = Instantiate(CubeCreateParticle, CubeParent);
-        gm.transform.localPosition = new Vector3(0,(Cubes.Count-1) * 1.05f,0);
+        gm.transform.localPosition = new Vector3(0,(Cubes.Count-1) * 1.075f,0);
         gm = Instantiate(CubePrefab, CubeParent);
+        PickupCanvasScript.Instance.CreateText(gm.transform.position);
         Cubes.Add(gm.GetComponent<PlayerCubeScript>());
         gm.transform.localScale = Vector3.one * 0.1f;
-        gm.transform.localPosition = new Vector3(0,(Cubes.Count-1) * 1.05f,0);
+        gm.transform.localPosition = new Vector3(0,(Cubes.Count-1) * 1.075f,0);
         float t = 0;
         while (t < 1)
         {
-            gm.transform.localScale = Vector3.Lerp(Vector3.one *0.1f, Vector3.one * 0.95f, t);
-            t += Time.deltaTime * 8;
+            gm.transform.localScale = Vector3.Lerp(Vector3.one *0.1f, new Vector3(0.9f, 0.95f, 0.9f), t);
+            t += Time.deltaTime * 6;
             yield return null;
         }
-        gm.transform.localScale = Vector3.one*0.95f;
+        gm.transform.localScale = new Vector3(0.9f, 0.95f, 0.9f);
     }
 }

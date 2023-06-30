@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Pickup
   - Obstacle
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -13,9 +14,9 @@ TagManager:
   - Ragdoll
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Player
+  - Wall
+  - None
   - 
   - 
   - 
