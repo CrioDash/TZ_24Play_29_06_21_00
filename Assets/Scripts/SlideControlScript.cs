@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class SlideControlScript : MonoBehaviour
 {
@@ -11,24 +13,34 @@ public class SlideControlScript : MonoBehaviour
     public GameObject Pointer;
     public Transform leftSide;
     public Transform rightSide;
-    
+    public Button restartButton;
+
+    private bool _fingerDown;
     private RectTransform _canvasRect;
     
 
     private void Awake()
     {
         _canvasRect = GetComponent<RectTransform>();
+        restartButton.onClick.AddListener(() => SceneManager.LoadScene(0));
         StartCoroutine(PointerMove());
     }
     
-    
+   
 
     //якщо гравець дотикаЇтьс€ екрану ≥ не стоњть пауза гравець перем≥щуЇтьс€ по борду
     public void Update()
     {
-        if(Input.touchCount==0) 
+        if (_fingerDown == false && Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
+        {
+            _fingerDown = true;
+        }
+        else if (Input.touchCount == 0)
+        {
+            _fingerDown = false;
+        }
+        if(!_fingerDown)
             return;
-        //якщо п≥знавальна панель активна, то вона вимикаЇтьс€
         if (GuidePanel.activeSelf)
         {
             GuidePanel.SetActive(false);
