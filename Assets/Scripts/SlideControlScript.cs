@@ -23,10 +23,12 @@ public class SlideControlScript : MonoBehaviour
     
     
 
+    //якщо гравець дотикаЇтьс€ екрану ≥ не стоњть пауза гравець перем≥щуЇтьс€ по борду
     public void Update()
     {
-        if(Input.touchCount==0 || (!GuidePanel.activeSelf && GameManager.Instance.IsPaused))
+        if(Input.touchCount==0) 
             return;
+        //якщо п≥знавальна панель активна, то вона вимикаЇтьс€
         if (GuidePanel.activeSelf)
         {
             GuidePanel.SetActive(false);
@@ -35,9 +37,11 @@ public class SlideControlScript : MonoBehaviour
         Vector3 pos = PlayerMoveScript.Instance.transform.position;
         pos.x = Input.GetTouch(0).position.x / (_canvasRect.rect.width-75);
         pos.x = pos.x * 4 - 2;
-        PlayerMoveScript.Instance.transform.position = pos;
+        if(!GameManager.Instance.IsPaused)
+            PlayerMoveScript.Instance.transform.position = pos;
     }
 
+    //јн≥мац≥€ руху курсору
     public IEnumerator PointerMove()
     {
         while (true)

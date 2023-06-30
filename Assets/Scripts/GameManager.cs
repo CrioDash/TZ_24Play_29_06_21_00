@@ -15,11 +15,7 @@ namespace DefaultNamespace
             Application.targetFrameRate = 60;
         }
 
-        public void StartGame()
-        {
-            
-        }
-
+        //Пауза
         public void ChangeState()
         {
             IsPaused = !IsPaused;

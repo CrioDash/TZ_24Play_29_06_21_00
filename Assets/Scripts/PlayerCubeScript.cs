@@ -18,12 +18,16 @@ namespace DefaultNamespace
 
         private void OnTriggerEnter(Collider other)
         {
+            //При вхожденні в фрагмент з стіною робить колайдери меншими, щоб не завдіти зайві перешкоди
             if(other.CompareTag("Wall"))
             {
                 _body.isKinematic = true;
                 _collider.center = Vector3.zero;
-                _collider.size = Vector3.one;
+                _collider.size = Vector3.one *0.95f;
             }
+            
+            //При зіткненні з перешкодою кубик, що завдів перешкоду, видаляється зі списку кубиків гравця,
+            //програється анімація струсу камери і, якщо кубиків не залишилось, гра закінчується
             if (other.CompareTag("Obstacle"))
             {
                 _body.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
@@ -37,6 +41,8 @@ namespace DefaultNamespace
                 if (PlayerMoveScript.Instance.Cubes.Count == 0)
                     StartCoroutine(PlayerMoveScript.Instance.Death());
             }
+            
+            //При входженні в підбиральний кубик програється анімація його підбору, гравець стрибає і під ним створюється новий кубик
             if (other.CompareTag("Pickup"))
             {
                 other.GetComponent<BoxCollider>().enabled = false;
@@ -46,6 +52,8 @@ namespace DefaultNamespace
             }
         }
 
+        
+        //При виході в фрагменту з стіною робить колайдери звичайними
         private void OnTriggerExit(Collider other)
         {
             if(other.CompareTag("Wall"))
@@ -56,6 +64,7 @@ namespace DefaultNamespace
             }
         }
 
+        //Анімація зменшення підабраного кубика
         public IEnumerator PickupAnimation(GameObject gm)
         {
             float t = 0;

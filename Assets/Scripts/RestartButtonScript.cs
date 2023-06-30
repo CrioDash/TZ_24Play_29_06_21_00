@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 namespace DefaultNamespace
 {
-    public class RestartButtonScript:MonoBehaviour
+    public class RestartButtonScript:MonoBehaviour, IPointerClickHandler
     {
-        public void Restart()
+
+        //Кнопка перезапуску гри
+        public void OnPointerClick(PointerEventData eventData)
         {
             SceneManager.LoadScene(0);
         }

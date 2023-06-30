@@ -7,6 +7,9 @@ namespace DefaultNamespace
 {
     public class TrackSpawnScript : MonoBehaviour
     {
+        
+        //Можливі варіанти перешкод
+        
         private int[,,] _obstacles= {
             {
                 {1,1,1,1,1},
@@ -40,17 +43,21 @@ namespace DefaultNamespace
             }
         };
 
+        //Довжина одного сгемента рівня
         public int trackLength ;
+        
         public GameObject trackPrefab;
         public GameObject pickupPrefab;
         public GameObject obstaclePrefab;
 
+        //Точка спавну перешкод
         private Transform _obstacleSpawn;
 
         private int _trackCount=0;
 
         private void Start()
         {
+            //Початок генерації сегментів
             Generate(3,false);
             StartCoroutine(GeneratingTracks());
         }
@@ -59,6 +66,7 @@ namespace DefaultNamespace
         {
             for (int i = 0; i < count; i++)
             {
+                //Генерація сегменту та його витягування
                 GameObject gm = Instantiate(trackPrefab, transform);
                 GameObject mesh = gm.GetComponentInChildren<MeshRenderer>().gameObject;
                 Vector3 scale = mesh.transform.localScale;
@@ -72,6 +80,8 @@ namespace DefaultNamespace
                 pos.z = trackLength / 2;
                 _obstacleSpawn.transform.localPosition = pos;
                 _trackCount++;
+                
+                //Генерація кубиків
                 for (int j = 0; j < 3; j++)
                 {
                     GameObject pickup = Instantiate(pickupPrefab, gm.transform);
@@ -81,6 +91,7 @@ namespace DefaultNamespace
                     pickup.transform.localPosition = pos;
                 }
 
+                //Генерація перешкоди
                 int obsNum = Random.Range(0, _obstacles.GetLength(0));
                 for (int j = 0; j < 5; j++)
                 {
@@ -101,6 +112,7 @@ namespace DefaultNamespace
             }
         }
 
+        //Корутина для генерації сегментів
         public IEnumerator GeneratingTracks()
         {
             while (true)
@@ -115,6 +127,7 @@ namespace DefaultNamespace
             }
         }
 
+        //Корутина для анімації пійдому сегменту
         public IEnumerator AnimateTrack(GameObject gm)
         {
             Vector3 posStart = gm.transform.localPosition;
@@ -129,6 +142,8 @@ namespace DefaultNamespace
                 t += Time.deltaTime;
                 yield return null;
             }
+
+            gm.transform.localPosition = posEnd;
         }
     }
 }

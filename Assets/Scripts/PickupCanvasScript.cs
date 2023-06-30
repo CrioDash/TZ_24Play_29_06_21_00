@@ -17,12 +17,14 @@ namespace DefaultNamespace
             Instance = this;
         }
 
+        //Створення тексту при підборі кубика
         public void CreateText(Vector3 pos)
         {
             transform.position = pos;
             StartCoroutine(TextFade(Instantiate(textPrefab, transform).GetComponent<TextMeshProUGUI>()));
         }
 
+        //Анімація руху та затухання кубика
         private IEnumerator TextFade(TextMeshProUGUI text)
         {
             text.transform.localPosition = Vector3.zero;

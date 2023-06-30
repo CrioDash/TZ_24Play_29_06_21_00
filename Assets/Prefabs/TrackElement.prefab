@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2451959803895662784}
   - component: {fileID: 4023635480592621771}
   - component: {fileID: 7455925692591042969}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: TrackRoad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -140,7 +140,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 5, y: 5, z: 1.5}
+  m_Size: {x: 5, y: 5, z: 2}
   m_Center: {x: 2.5, y: 2.5, z: -0.5}
 --- !u!1 &4841276968991133954
 GameObject:
@@ -151,7 +151,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4766591341369933228}
-  m_Layer: 0
+  m_Layer: 4
   m_Name: TrackElement
   m_TagString: Untagged
   m_Icon: {fileID: 0}

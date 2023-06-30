@@ -8,31 +8,36 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMoveScript : MonoBehaviour
 {
+    //Параметри героя
     public float speed;
     public float jumpHeight;
     
+    //Об'єкт в якому містяться всі кубики гравця
     public Transform CubeParent;
 
+    //Префаби
     public GameObject EndScreen;
     public GameObject CubeCreateParticle;
     public GameObject CubePrefab;
     public Rigidbody StickmanBody;
+    public TrailRenderer Trail;
     
+    //Аніматори
     public Animator playerAnimator;
     public Animator cameraAnimator;
     
+    [HideInInspector]
     public List<PlayerCubeScript> Cubes;
     
     public static PlayerMoveScript Instance;
 
-    private TrailRenderer _trail;
+    //Список з частинами тіла героя
     private List<Rigidbody> _rigidbodies;
 
     private void Awake()
     {
         Instance = this;
         playerAnimator = GetComponentInChildren<Animator>();
-        _trail = GetComponentInChildren<TrailRenderer>();
         _rigidbodies = StickmanBody.GetComponentsInChildren<Rigidbody>().ToList();
         _rigidbodies.Remove(StickmanBody);    
     }
@@ -44,31 +49,36 @@ public class PlayerMoveScript : MonoBehaviour
         
     }
     
+    //Якщо не стоїть павза, то гравець переміщується, а слід рухається за ним
     void Update()
     {
+        
         if(GameManager.Instance.IsPaused)
            return;
        Vector3 pos = transform.position;
        pos.z += speed * Time.deltaTime;
        transform.position = pos;
-       if (_trail != null)
+       if (Trail != null)
        {
-           pos = _trail.transform.localPosition;
+           pos = transform.position;
            pos.y = -0.45f;
-           _trail.transform.localPosition = pos;
+           Trail.transform.position = pos;
        }
     }
 
+    //Якщо вже не стоїть павза, то гра зупиняться, вмикається регдол і з'являється вікно кінця гри
     public IEnumerator Death()
     {
+        if(GameManager.Instance.IsPaused)
+            yield break;
+        GameManager.Instance.ChangeState();
         _rigidbodies.ForEach(rb => rb.isKinematic = false);
-        Destroy(_trail.gameObject);
+        Destroy(Trail.gameObject);
         playerAnimator.enabled = false;
         EndScreen.SetActive(true);
-        yield return new WaitForSeconds(0.5f);
-        GameManager.Instance.ChangeState();
     }
 
+    //Стрибок гравця
     public void Jump()
     {
         playerAnimator.SetTrigger("Jump");
@@ -77,6 +87,7 @@ public class PlayerMoveScript : MonoBehaviour
         StickmanBody.transform.localPosition = pos;
     }
 
+    //Анімація створення нового кубика під гравцем та програш партіклу
     public IEnumerator CreateCube()
     {
         yield return new WaitForSeconds(0.05f);
